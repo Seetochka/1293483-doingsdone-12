@@ -44,19 +44,19 @@
             if ($task['completed'] && $show_complete_tasks === 0) {
                 continue;
             } ?>
-            <tr class="tasks__item task <?= $task['completed'] ? 'task--completed' : ''; ?>">
+            <tr class="tasks__item task <?= $task['completed'] ? 'task--completed' : ''; ?> <?= $task['important'] ? 'task--important' : ''; ?>">
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
                         <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
                         <span class="checkbox__text"><?= htmlspecialchars($task['task']); ?></span>
                     </label>
                 </td>
-
                 <td class="task__file">
-                    <a class="download-link" href="#">Home.psd</a>
+                    <?php if (!empty($task['file'])): ?>
+                        <a class="download-link" href="#"><?= $task['file']; ?></a>
+                    <?php endif; ?>
                 </td>
-
-                <td class="task__date"></td>
+                <td class="task__date"><?= !empty($task['date']) ? $task['date'] : ''; ?></td>
             </tr>
         <?php endforeach; ?>
     </table>
