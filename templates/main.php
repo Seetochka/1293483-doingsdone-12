@@ -5,8 +5,8 @@
         <ul class="main-navigation__list">
             <?php foreach ($projects as $project): ?>
                 <li class="main-navigation__list-item">
-                    <a class="main-navigation__list-item-link" href="#"><?= htmlspecialchars($project); ?></a>
-                    <span class="main-navigation__list-item-count"><?= count_tasks($tasks, $project); ?></span>
+                    <a class="main-navigation__list-item-link" href="#"><?= htmlspecialchars($project['title']); ?></a>
+                    <span class="main-navigation__list-item-count"><?= count_tasks($tasks, $project['id']); ?></span>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -41,14 +41,14 @@
 
     <table class="tasks">
         <?php foreach ($tasks as $task):
-            if ($task['completed'] && $show_complete_tasks === 0) {
+            if ($task['status'] && $show_complete_tasks === 0) {
                 continue;
             } ?>
-            <tr class="tasks__item task <?= $task['completed'] ? 'task--completed' : ''; ?> <?= $task['important'] ? 'task--important' : ''; ?>">
+            <tr class="tasks__item task <?= $task['status'] ? 'task--completed' : ''; ?> <?= $task['important'] ? 'task--important' : ''; ?>">
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
                         <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                        <span class="checkbox__text"><?= htmlspecialchars($task['task']); ?></span>
+                        <span class="checkbox__text"><?= htmlspecialchars($task['title']); ?></span>
                     </label>
                 </td>
                 <td class="task__file">
@@ -56,7 +56,7 @@
                         <a class="download-link" href="#"><?= $task['file']; ?></a>
                     <?php endif; ?>
                 </td>
-                <td class="task__date"><?= !empty($task['date']) ? $task['date'] : ''; ?></td>
+                <td class="task__date"><?= !empty($task['due_date']) ? date_format(date_create($task['due_date']), 'd.m.Y') : ''; ?></td>
             </tr>
         <?php endforeach; ?>
     </table>
