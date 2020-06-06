@@ -1,7 +1,10 @@
 <?php
 require_once 'helpers.php';
 
+date_default_timezone_set('Europe/Moscow');
+
 // показывать или нет выполненные задачи
+define('HOURS_A_DAY', 24);
 $show_complete_tasks = rand(0, 1);
 
 $user_name = 'Светлана';
@@ -10,25 +13,25 @@ $projects = ['Входящие', 'Учеба', 'Работа', 'Домашние
 $tasks = [
     [
         'task' => 'Собеседование в IT компании',
-        'date' => '01.12.2019',
+        'date' => '07.06.2020',
         'category' => 'Работа',
         'completed' => false,
     ],
     [
         'task' => 'Выполнить тестовое задание',
-        'date' => '25.12.2019',
+        'date' => '06.06.2020',
         'category' => 'Работа',
         'completed' => false,
     ],
     [
         'task' => 'Сделать задание первого раздела',
-        'date' => '21.12.2019',
+        'date' => '05.06.2020',
         'category' => 'Учеба',
         'completed' => true,
     ],
     [
         'task' => 'Встреча с другом',
-        'date' => '22.12.2019',
+        'date' => '11.06.2020',
         'category' => 'Входящие',
         'completed' => false,
     ],
@@ -62,6 +65,19 @@ function count_tasks(array $tasks, string $project_name): int {
     }
 
     return $count;
+}
+
+foreach ($tasks as $key => $task) {
+    if (!empty($task['date'])) {
+        $date_diff = strtotime($task['date']) - strtotime('now');
+        $hours_count = $date_diff / 3600;
+
+        if ($hours_count <= HOURS_A_DAY) {
+            $tasks[$key]['important'] = true;
+        } else {
+            $tasks[$key]['important'] = false;
+        }
+    }
 }
 
 $page_content = include_template('main.php', [
