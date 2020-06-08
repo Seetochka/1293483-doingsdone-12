@@ -78,3 +78,19 @@ function fetch_assoc($connection, string $sql_request, array  $data = []): ?arra
 
     return mysqli_fetch_assoc($result);
 }
+
+/**
+ * Формирует URL исходя из переданного пути и параметров запроса
+ *
+ * @param array $params Массив с параметрами запрса
+ * @param string $path Адрес страницы
+ *
+ * @return string Сформираванный URL
+ */
+function get_query_href(array $params, string $path): string {
+    $current_params = $_GET;
+    $merged_params = array_merge($current_params, $params);
+    $query = http_build_query($merged_params);
+
+    return $path . ($query ? "?$query" : '');
+}
