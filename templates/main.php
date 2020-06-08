@@ -5,8 +5,9 @@
         <ul class="main-navigation__list">
             <?php foreach ($projects as $project): ?>
                 <li class="main-navigation__list-item">
-                    <a class="main-navigation__list-item-link" href="#"><?= htmlspecialchars($project['title']); ?></a>
-                    <span class="main-navigation__list-item-count"><?= count_tasks($tasks, $project['id']); ?></span>
+                    <a class="main-navigation__list-item-link <?= $active_project_id === strval($project['id']) ? 'main-navigation__list-item--active' : ''; ?>"
+                       href="<?= get_query_href(['project_id' => $project['id']], '/index.php'); ?>"><?= htmlspecialchars($project['title']); ?></a>
+                    <span class="main-navigation__list-item-count"><?= count_tasks($all_tasks, $project['id']); ?></span>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -27,7 +28,7 @@
 
     <div class="tasks-controls">
         <nav class="tasks-switch">
-            <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
+            <a href="<?= get_query_href(['project_id' => null], '/index.php'); ?>" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
             <a href="/" class="tasks-switch__item">Повестка дня</a>
             <a href="/" class="tasks-switch__item">Завтра</a>
             <a href="/" class="tasks-switch__item">Просроченные</a>
