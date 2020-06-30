@@ -40,14 +40,21 @@ if (!empty($active_project_id)) {
     }
 }
 
-$query_param['user_id = ?'] = $user_data['id'];
+$search_query = trim(filter_input(INPUT_GET, 'q'));
 
-if (!empty($active_project_id)) {
-    $query_param['project_id = ?'] = $active_project_id;
+if (!empty($search_query)) {
+    $tasks = get_sql_tasks($link, ['user_id = ?' => $user_data['id'], 'q' => $search_query]);
+} else {
+    $query_param['user_id = ?'] = $user_data['id'];
+
+    if (!empty($active_project_id)) {
+        $query_param['project_id = ?'] = $active_project_id;
+    }
+
+    $tasks = get_sql_tasks($link, $query_param);
 }
 
 $all_tasks = get_sql_tasks($link, ['user_id = ?' => $user_data['id']]);
-$tasks = get_sql_tasks($link, $query_param);
 
 foreach ($tasks as $key => $task) {
     if (!empty($task['due_date'])) {
@@ -68,6 +75,7 @@ $page_content = include_template('main.php', [
     'projects' => $projects,
     'all_tasks' => $all_tasks,
     'active_project_id' => $active_project_id,
+    'search_query' => $search_query,
 ]);
 
 $layout_content = include_template('layout.php', [
