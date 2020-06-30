@@ -30,8 +30,14 @@ function get_sql_tasks($connection, array $params): array
 {
     $sql_tasks = 'SELECT t.id, t.dt_add, t.status, t.title, t.file, t.due_date, t.user_id, t.project_id FROM tasks t';
 
-    if (!empty($params)) {
+    if (count($params) > 0 && !array_key_exists('q', $params)) {
         $sql_tasks .= ' WHERE ' . implode(' AND ', array_keys($params));
+    }
+
+    if (array_key_exists('q', $params)) {
+        $sql_tasks .= ' WHERE t.user_id = ? AND MATCH(t.title) AGAINST(?)';
+
+        return fetch_all($connection, $sql_tasks, $params);
     }
 
     $sql_tasks .= ' ORDER BY dt_add DESC';

@@ -7,7 +7,7 @@
                     <a class="main-navigation__list-item-link
                     <?= !empty($active_project_id) && $active_project_id === $project['id'] ?
                         'main-navigation__list-item--active' : ''; ?>"
-                       href="<?= get_query_href(['project-id' => $project['id']], '/index.php'); ?>">
+                       href="<?= get_query_href(['project-id' => $project['id'], 'q' => null], '/index.php'); ?>">
                         <?= htmlspecialchars($project['title']); ?></a>
                     <span class="main-navigation__list-item-count">
                         <?= count_tasks($all_tasks, $project['id']); ?>
@@ -21,8 +21,9 @@
 </section>
 <main class="content__main">
     <h2 class="content__main-heading">Список задач</h2>
-    <form class="search-form" action="index.php" method="post" autocomplete="off">
-        <input class="search-form__input" type="text" name="" value="" placeholder="Поиск по задачам">
+    <form class="search-form" action="index.php" method="get" autocomplete="off">
+        <input class="search-form__input" type="text" name="q" value="<?= !empty($search_query) ? $search_query : '' ?>"
+               placeholder="Поиск по задачам">
         <input class="search-form__submit" type="submit" name="" value="Искать">
     </form>
     <div class="tasks-controls">
@@ -40,27 +41,31 @@
         </label>
     </div>
     <table class="tasks">
-        <?php foreach ($tasks as $task):
-            if ($task['status'] && $show_complete_tasks === 0) {
-                continue;
-            } ?>
-            <tr class="tasks__item task
-        <?= !empty($task['status']) ? 'task--completed' : ''; ?>
-        <?= !empty($task['important']) ? 'task--important' : ''; ?>">
-                <td class="task__select">
-                    <label class="checkbox task__checkbox">
-                        <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                        <span class="checkbox__text"><?= htmlspecialchars($task['title']); ?></span>
-                    </label>
-                </td>
-                <td class="task__file">
-                    <?php if (!empty($task['file'])): ?>
-                        <a class="download-link" href="<?= $task['file']; ?>"><?= $task['file']; ?></a>
-                    <?php endif; ?>
-                </td>
-                <td class="task__date"><?= !empty($task['due_date']) ?
-                        date_format(date_create($task['due_date']), 'd.m.Y') : ''; ?></td>
-            </tr>
-        <?php endforeach; ?>
+        <?php if (!empty($tasks)) : ?>
+            <?php foreach ($tasks as $task):
+                if ($task['status'] && $show_complete_tasks === 0) {
+                    continue;
+                } ?>
+                <tr class="tasks__item task
+            <?= !empty($task['status']) ? 'task--completed' : ''; ?>
+            <?= !empty($task['important']) ? 'task--important' : ''; ?>">
+                    <td class="task__select">
+                        <label class="checkbox task__checkbox">
+                            <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
+                            <span class="checkbox__text"><?= htmlspecialchars($task['title']); ?></span>
+                        </label>
+                    </td>
+                    <td class="task__file">
+                        <?php if (!empty($task['file'])): ?>
+                            <a class="download-link" href="<?= $task['file']; ?>"><?= $task['file']; ?></a>
+                        <?php endif; ?>
+                    </td>
+                    <td class="task__date"><?= !empty($task['due_date']) ?
+                            date_format(date_create($task['due_date']), 'd.m.Y') : ''; ?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <p>Ничего не найдено по вашему запросу</p>
+        <?php endif; ?>
     </table>
 </main>

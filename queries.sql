@@ -3,7 +3,7 @@ USE doingsdone;
 /*Добавляет пользователей*/
 INSERT INTO users (dt_add, email, name, password)
 VALUES ('2019-05-26 18:49', 'vladik@gmail.com', 'Владик', 'qwerty'),
-       ('2019-10-07 22:11', 'svetlana@gmail.com', 'Светлана', '12345');
+       ('2019-10-07 22:11', 'svetlana@gmail.com', 'Светлана', '$2y$10$7wC8zkdanq/.1FmGw0xe8elKLNviCHl2jPXLD69FknDbx0Kh1xBnO');
 
 /*Добавляет список проектов*/
 INSERT INTO projects (title, user_id)
