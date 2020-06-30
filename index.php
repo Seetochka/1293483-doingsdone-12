@@ -8,11 +8,11 @@ require_once 'constants.php';
 date_default_timezone_set('Europe/Moscow');
 
 $show_complete_tasks = rand(0, 1);
-$user_name = 'Светлана';
-$user_id = 2;
+$_SESSION['user'] = ['id' => 2, 'name' => 'Светлана'];//потом удалить
+$user_data = $_SESSION['user'];
 
 $active_project_id = filter_input(INPUT_GET, 'project-id', FILTER_VALIDATE_INT);
-$projects = get_sql_projects($link, ['user_id = ?' => $user_id]);
+$projects = get_sql_projects($link, ['user_id = ?' => $user_data['id']]);
 
 if (!empty($active_project_id)) {
     $res = false;
@@ -29,13 +29,13 @@ if (!empty($active_project_id)) {
     }
 }
 
-$query_param['user_id = ?'] = $user_id;
+$query_param['user_id = ?'] = $user_data['id'];
 
 if (!empty($active_project_id)) {
     $query_param['project_id = ?'] = $active_project_id;
 }
 
-$all_tasks = get_sql_tasks($link, ['user_id = ?' => $user_id]);
+$all_tasks = get_sql_tasks($link, ['user_id = ?' => $user_data['id']]);
 $tasks = get_sql_tasks($link, $query_param);
 
 foreach ($tasks as $key => $task) {
@@ -61,7 +61,7 @@ $layout_content = include_template('layout.php', [
     'active_project_id' => $active_project_id,
     'page_content' => $page_content,
     'title' => 'Дела в порядке: главная',
-    'user_name' => $user_name,
+    'user_name' => $user_data['name'],
 ]);
 
 print $layout_content;

@@ -66,11 +66,41 @@ function create_sql_task($connection, int $user_id, array $task): bool
     $sql_task .= array_key_exists('file', $task) ? ', ?' : '';
     $sql_task .= ')';
 
-    $stmt_post = db_get_prepare_stmt($connection, $sql_task, $task);
+    $stmt_task = db_get_prepare_stmt($connection, $sql_task, $task);
 
-    if (mysqli_stmt_execute($stmt_post)) {
-        return true;
-    }
+    return mysqli_stmt_execute($stmt_task);
+}
 
-    return false;
+/**
+ * Получает данные пользователя по email
+ *
+ * @param mysqli $connection Ресурс соединения
+ * @param string $user_email email пользователя
+ *
+ * @return array | null Массив с данными пользователя или null, если пользователя с таким email нет
+ */
+function get_sql_user($connection, string $user_email): ?array
+{
+    $sql_user = 'SELECT u.id, u.dt_add, u.email, u.name, u.password FROM users u WHERE u.email = ?';
+
+    return fetch_assoc($connection, $sql_user, [$user_email]);
+}
+
+/**
+ * Создает нового пользователя
+ *
+ * @param mysqli $connection Ресурс соединения
+ * @param array $user_data Массив с данными пользователя
+ *
+ * @return bool true если пользователь сохранен в БД, иначе false
+ */
+function create_sql_user($connection, array $user_data): bool
+{
+    $user_data['password'] = password_hash($user_data['password'], PASSWORD_DEFAULT);
+
+    $sql_user = 'INSERT INTO users (dt_add, email, password, name) VALUE (NOW(), ?, ?, ?)';
+
+    $stmt_user = db_get_prepare_stmt($connection, $sql_user, $user_data);
+
+    return mysqli_stmt_execute($stmt_user);
 }
