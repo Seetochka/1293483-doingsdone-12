@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
-<body>
+<body class="<?= $_SERVER['REQUEST_URI'] === '/' && empty($_SESSION['user']) ? 'body-background' : ''; ?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 <div class="page-wrapper">
-    <div class="container container--with-sidebar">
+    <div class="container <?= $_SERVER['REQUEST_URI'] === '/' && empty($_SESSION['user']) ? '' : 'container--with-sidebar'; ?>">
         <header class="main-header">
             <a href="/">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
@@ -21,46 +21,19 @@
                        href="/add-task.php">Добавить задачу</a>
                     <div class="main-header__side-item user-menu">
                         <div class="user-menu__data">
-                            <p><?= !empty($user_name) ? $user_name : ''; ?></p>
-                            <a href="#">Выйти</a>
+                            <p><?= !empty($_SESSION['user']['name']) ? $_SESSION['user']['name'] : ''; ?></p>
+                            <a href="logout.php">Выйти</a>
                         </div>
                     </div>
                 <?php else : ?>
-                    <a class="main-header__side-item button button--transparent" href="form-authorization.html">Войти</a>
+                    <a class="main-header__side-item button button--transparent" href="auth.php">Войти</a>
                 <?php endif; ?>
             </div>
         </header>
-
         <div class="content">
-            <section class="content__side">
-                <?php if (!empty($_SESSION['user'])) : ?>
-                    <h2 class="content__side-heading">Проекты</h2>
-                    <nav class="main-navigation">
-                        <ul class="main-navigation__list">
-                            <?php foreach ($projects as $project): ?>
-                                <li class="main-navigation__list-item">
-                                    <a class="main-navigation__list-item-link
-                                    <?= !empty($active_project_id) && $active_project_id === $project['id'] ?
-                                        'main-navigation__list-item--active' : ''; ?>"
-                                       href="<?= get_query_href(['project-id' => $project['id']], '/index.php'); ?>">
-                                        <?= htmlspecialchars($project['title']); ?></a>
-                                    <span class="main-navigation__list-item-count">
-                                        <?= count_tasks($all_tasks, $project['id']); ?>
-                                    </span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </nav>
-                    <a class="button button--transparent button--plus content__side-button"
-                       href="pages/form-project.html" target="project_add">Добавить проект</a>
-                <?php else : ?>
-                    <p class="content__side-info">Если у вас уже есть аккаунт, авторизуйтесь на сайте</p>
-                    <a class="button button--transparent content__side-button" href="form-authorization.html">Войти</a>
-                <?php endif; ?>
-            </section>
-            <main class="content__main">
-                <?= !empty($page_content) ? $page_content : ''; ?>
-            </main>
+
+            <?= !empty($page_content) ? $page_content : ''; ?>
+
         </div>
     </div>
 </div>
@@ -99,8 +72,8 @@
                           1.182 4.57 0 7.066-3.992 7.066-7.456v-.34c.49-.375.912-.835
                           1.24-1.357-.465.218-.963.36-1.473.42z"/>
                 </svg>
-            </a><span class="visually-hidden">
-        ,</span>
+            </a>
+            <span class="visually-hidden">,</span>
             <a class="social__link social__link--instagram" href="#">
                 <span class="visually-hidden">Instagram</span>
                 <svg width="27" height="27" viewBox="0 0 27 27" xmlns="http://www.w3.org/2000/svg">
