@@ -17,38 +17,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return validate_email($value);
         },
         'password' => function($value) {
-            return validate_password($value);
-        },
-        'name' => function($value) {
             return validate_field_completion($value);
         },
     ];
 
-    $errors = validate($user, $rules);
+    $errors = array_filter(validate($user, $rules));
 
-    if (empty($errors['email'])) {
-        $errors['email'] = get_sql_user($link, $user['email']) ? 'Пользователь с таким email уже существует' : '';
+    if (!count($errors)) {
+        $user_db = get_sql_user($link, $user['email']);
+
+        if (!empty($user_db) && password_verify($user['password'], $user_db['password'])) {
+            $_SESSION['user'] = $user_db;
+        } else {
+            $errors['email'] = 'Вы ввели неверный email/пароль';
+            $errors['password'] = 'Вы ввели неверный email/пароль';
+        }
     }
 
-    $errors = array_filter($errors);
-
-    if (empty($errors)) {
-        $result = create_sql_user($link, $user);
-
-        if ($result) {
-            header("Location: /");
-            die();
-        }
+    if (!count($errors)) {
+        header('Location: /');
+        die();
     }
 }
 
-$page_content = include_template('registration.php', [
+$page_content = include_template('auth.php', [
     'user' => $user ?? [],
     'errors' => $errors ?? [],
 ]);
+
 $layout_content = include_template('layout.php', [
     'page_content' => $page_content,
-    'title' => 'Дела в порядке: регистрация',
+    'title' => 'Дела в порядке: аутентификация',
 ]);
 
 print $layout_content;

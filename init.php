@@ -6,6 +6,8 @@ error_reporting(E_ALL);
 ini_set('error_log', __DIR__ . '/php-errors.log');
 error_log('Запись в лог', 0);
 
+session_start();
+
 $link = get_db_connection($db);
 mysqli_set_charset($link, "utf8");
 

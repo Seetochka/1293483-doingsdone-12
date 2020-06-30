@@ -5,10 +5,21 @@ require_once 'functions.php';
 require_once 'sql-queries.php';
 require_once 'constants.php';
 
+if (!isset($_SESSION['user'])) {
+    $page_content = include_template('guest.php', []);
+
+    $layout_content = include_template('layout.php', [
+        'page_content' => $page_content,
+        'title' => 'Дела в порядке: главная',
+    ]);
+
+    print $layout_content;
+    die();
+}
+
 date_default_timezone_set('Europe/Moscow');
 
 $show_complete_tasks = rand(0, 1);
-$_SESSION['user'] = ['id' => 2, 'name' => 'Светлана'];//потом удалить
 $user_data = $_SESSION['user'];
 
 $active_project_id = filter_input(INPUT_GET, 'project-id', FILTER_VALIDATE_INT);
@@ -54,14 +65,14 @@ foreach ($tasks as $key => $task) {
 $page_content = include_template('main.php', [
     'tasks' => $tasks,
     'show_complete_tasks' => $show_complete_tasks,
-]);
-$layout_content = include_template('layout.php', [
     'projects' => $projects,
     'all_tasks' => $all_tasks,
     'active_project_id' => $active_project_id,
+]);
+
+$layout_content = include_template('layout.php', [
     'page_content' => $page_content,
     'title' => 'Дела в порядке: главная',
-    'user_name' => $user_data['name'],
 ]);
 
 print $layout_content;
