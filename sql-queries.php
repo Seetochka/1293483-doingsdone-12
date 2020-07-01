@@ -46,6 +46,21 @@ function get_sql_tasks($connection, array $params): array
 }
 
 /**
+ * Получает массив с данными задачи по id
+ *
+ * @param mysqli $connection Ресурс соединения
+ * @param int $task_id id задачи
+ *
+ * @return array Массив с данными задачи
+ */
+function get_sql_task($connection, int $task_id): array
+{
+    $sql_tasks = 'SELECT t.id, t.dt_add, t.status, t.title, t.file, t.due_date, t.user_id, t.project_id FROM tasks t WHERE t.id = ?';
+
+    return fetch_assoc($connection, $sql_tasks, [$task_id]);
+}
+
+/**
  * Создает новую задачу
  *
  * @param mysqli $connection Ресурс соединения
@@ -109,4 +124,42 @@ function create_sql_user($connection, array $user_data): bool
     $stmt_user = db_get_prepare_stmt($connection, $sql_user, $user_data);
 
     return mysqli_stmt_execute($stmt_user);
+}
+
+/**
+ * Создает новый проект
+ *
+ * @param mysqli $connection Ресурс соединения
+ * @param int $user_id id пользователя
+ * @param string $project Проект
+ *
+ * @return bool true если проект сохранен в БД, иначе false
+ */
+function create_sql_project($connection, int $user_id, string $project): bool
+{
+    $sql_task = 'INSERT INTO projects (title, user_id) VALUES (?, ?)';
+
+    $stmt_task = db_get_prepare_stmt($connection, $sql_task, [$project, $user_id]);
+
+    return mysqli_stmt_execute($stmt_task);
+}
+
+
+/**
+ * Инвентирует статус задачи
+ *
+ * @param mysqli $connection Ресурс соединения
+ * @param array $task Массив с данными задачи
+ *
+ * @return bool true если статуз задачи успешно изменен, иначе false
+ */
+function toggle_status($connection, array $task): bool
+{
+    $status = 1 - (int) $task['status'];
+
+    $sql = 'UPDATE tasks SET status = ? WHERE id = ?';
+
+    $stmt = db_get_prepare_stmt($connection, $sql, [$status, $task['id']]);
+
+    return mysqli_stmt_execute($stmt);
 }

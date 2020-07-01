@@ -4,20 +4,14 @@
         <ul class="main-navigation__list">
             <?php foreach ($projects as $project): ?>
                 <li class="main-navigation__list-item">
-                    <a class="main-navigation__list-item-link
-                    <?= !empty($active_project_id) && $active_project_id === $project['id'] ?
-                        'main-navigation__list-item--active' : ''; ?>"
-                       href="<?= get_query_href(['project-id' => $project['id']], '/index.php'); ?>">
-                        <?= htmlspecialchars($project['title']); ?></a>
-                    <span class="main-navigation__list-item-count">
-                        <?= count_tasks($all_tasks, $project['id']); ?>
-                    </span>
+                    <a class="main-navigation__list-item-link <?= !empty($active_project_id) && $active_project_id === $project['id'] ? 'main-navigation__list-item--active' : ''; ?>"
+                       href="<?= get_query_href(['project-id' => $project['id']], '/index.php'); ?>"><?= htmlspecialchars($project['title']); ?></a>
+                    <span class="main-navigation__list-item-count"><?= count_tasks($all_tasks, $project['id']); ?></span>
                 </li>
             <?php endforeach; ?>
         </ul>
     </nav>
-    <a class="button button--transparent button--plus content__side-button"
-       href="pages/form-project.html" target="project_add">Добавить проект</a>
+    <a class="button button--transparent button--plus content__side-button" href="add-project.php" target="project_add">Добавить проект</a>
 </section>
 <main class="content__main">
     <h2 class="content__main-heading">Добавление задачи</h2>
@@ -36,14 +30,11 @@
         </div>
         <div class="form__row">
             <label class="form__label" for="project">Проект <sup>*</sup></label>
-            <select class="form__input form__input--select <?= !empty($errors['project_id']) ?
-                'form__input--error' : ''; ?>"
+            <select class="form__input form__input--select <?= !empty($errors['project_id']) ? 'form__input--error' : ''; ?>"
                     name="project_id"
                     id="project">
                 <?php foreach ($projects as $project): ?>
-                    <option value="<?= $project['id']; ?>" <?= !empty($task['project_id']) &&
-                    (int)$task['project_id'] === (int)$project['id'] ?
-                        'selected' : ''; ?>><?= $project['title']; ?></option>
+                    <option value="<?= $project['id']; ?>" <?= !empty($task['project_id']) && (int)$task['project_id'] === (int)$project['id'] ? 'selected' : ''; ?>><?= $project['title']; ?></option>
                 <?php endforeach; ?>
             </select>
             <?php if (!empty($errors['project_id'])): ?>
@@ -72,6 +63,9 @@
             </div>
         </div>
         <div class="form__row form__row--controls">
+            <?php if (count($errors) > 0) : ?>
+                <p class="error-message">Пожалуйста, исправьте ошибки в форме</p>
+            <?php endif; ?>
             <input class="button" type="submit" name="" value="Добавить">
         </div>
     </form>
