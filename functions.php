@@ -35,6 +35,46 @@ function count_tasks(array $tasks, string $project_id): int
 }
 
 /**
+ * Проверяет заканчивается ли время выполнения задачи
+ * @param array $task Массив с задачей
+ *
+ * @return bool true если заканчивается, иначе false
+ */
+function is_important_task(array $task): bool
+{
+    if (!empty($task['due_date'])) {
+        $date_diff = strtotime($task['due_date']) - strtotime('now');
+        $hours_count = $date_diff / 3600;
+
+        if ($hours_count <= HOURS_A_DAY) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Проверяет существует ли такой проект
+ * @param array $projects Массив с проектами
+ * @param int $active_project_id id проверяемого проекта
+ *
+ * @return bool true если существует, иначе false
+ */
+function is_project_exist(array $projects, int $active_project_id): bool
+{
+    $res = false;
+
+    foreach ($projects as $project) {
+        if ($active_project_id === $project['id']) {
+            $res = true;
+        }
+    }
+
+    return $res;
+}
+
+/**
  * Выполняет SQL запрос к базе данных на основе подготовленного выражения
  * @param mysqli $connection Ресурс соединения
  * @param string $sql_request SQL запрос с плейсхолдерами вместо значений

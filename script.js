@@ -1,16 +1,49 @@
 'use strict';
 
-var $checkbox = document.getElementsByClassName('show_completed');
+var showCompletedCheckbox = document.querySelector('.show-completed');
 
-if ($checkbox.length) {
-  $checkbox[0].addEventListener('change', function (event) {
-    var is_checked = +event.target.checked;
+if (showCompletedCheckbox) {
+  showCompletedCheckbox.addEventListener('change', handleCheckboxChange);
+}
 
-    var searchParams = new URLSearchParams(window.location.search);
-    searchParams.set('show_completed', is_checked);
+var taskCheckboxes = document.querySelectorAll('.checkbox__input.task__checkbox');
 
-    window.location = '/index.php?' + searchParams.toString();
+if (taskCheckboxes.length) {
+  taskCheckboxes.forEach(function (taskCheckbox) {
+    taskCheckbox.addEventListener('change', handleCheckboxChange);
   });
+}
+
+function handleCheckboxChange(evt) {
+  if (
+      evt.target.tagName !== 'INPUT' ||
+      evt.target.getAttribute('type') !== 'checkbox'
+  ) {
+    throw new Error('Element is not a checkbox input.');
+  }
+
+  var isChecked = evt.target.checked;
+  var isToggleAction = evt.target.dataset.toggle;
+  var name = evt.target.name;
+  var value = evt.target.value;
+
+  if (!name || !value) {
+    throw new Error('Cannot get parameter name or value for checkbox change handling.');
+  }
+
+  var searchParams = new URLSearchParams(window.location.search);
+
+  if (isChecked || isToggleAction) {
+    searchParams.set(name, value);
+  } else {
+    searchParams.delete(name);
+  }
+
+  if (Array.from(searchParams).length) {
+    window.location = window.location.pathname + '?' + searchParams.toString();
+  } else {
+    window.location = window.location.pathname;
+  }
 }
 
 flatpickr('#date', {
