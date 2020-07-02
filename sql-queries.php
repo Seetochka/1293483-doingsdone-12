@@ -93,18 +93,19 @@ function create_sql_task($connection, int $user_id, array $task): bool
 }
 
 /**
- * Получает данные пользователя по email
+ * Получает данные пользователя по параметру запроса
  *
  * @param mysqli $connection Ресурс соединения
- * @param string $user_email email пользователя
+ * @param string $param Параметр запроса
+ * @param string $value Значение запроса
  *
  * @return array | null Массив с данными пользователя или null, если пользователя с таким email нет
  */
-function get_sql_user($connection, string $user_email): ?array
+function get_sql_user($connection, string $param, string $value): ?array
 {
-    $sql_user = 'SELECT u.id, u.dt_add, u.email, u.name, u.password FROM users u WHERE u.email = ?';
+    $sql_user = "SELECT u.id, u.dt_add, u.email, u.name, u.password FROM users u WHERE $param = ?";
 
-    return fetch_assoc($connection, $sql_user, [$user_email]);
+    return fetch_assoc($connection, $sql_user, [$value]);
 }
 
 /**
