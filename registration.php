@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = validate($user, $rules);
 
     if (empty($errors['email'])) {
-        $errors['email'] = get_sql_user($link, $user['email']) ? 'Пользователь с таким email уже существует' : '';
+        $errors['email'] = get_sql_user($link, 'email', $user['email']) ? 'Пользователь с таким email уже существует' : '';
     }
 
     $errors = array_filter($errors);

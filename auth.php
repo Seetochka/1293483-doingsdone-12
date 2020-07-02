@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = array_filter(validate($user, $rules));
 
     if (!count($errors)) {
-        $user_db = get_sql_user($link, $user['email']);
+        $user_db = get_sql_user($link, 'email', $user['email']);
 
         if (!empty($user_db) && password_verify($user['password'], $user_db['password'])) {
             $_SESSION['user'] = $user_db;
